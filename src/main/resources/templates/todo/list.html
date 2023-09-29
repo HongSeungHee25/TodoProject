@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO LIST</title>
+    <link rel="stylesheet" th:href="@{/css/Todo.css}">
+</head>
+<body>
+<header>
+<h1>TODO LIST</h1>
+</header>
+<a th:href="@{register}" class="button">할일 등록</a>
+
+    <table>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>내용</th>
+            <th>날짜</th>
+            <th>상태</th>
+        </tr>
+<th:block th:each="vo : ${list}">
+    <tr>
+    <td><a th:href="@{read(tno=${vo.tno})}" th:text="${vo.tno}"></a></td>
+    <td th:text="${vo.title}"></td>
+    <td th:text="${vo.writer}"></td>
+    <td th:text="${#temporals.format(vo.dueDate, 'yyyy-MM-dd')}"></td>
+    <td th:text="${vo.finished}"></td>
+    </tr>
+    </th:block>
+    </table>
+
+
+
+</body>
+</html>

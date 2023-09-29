@@ -1,0 +1,67 @@
+@charset "UTF-8";
+body {
+    font-weight: bold;
+    text-align: center;
+}
+.button{
+    text-decoration: none;
+    border: 1px solid blue;
+    padding: 7px 25px;
+    background-color: #b5fffc;
+    color:black;
+    cursor: pointer;
+    display: inline-block;
+    text-align:center;
+    border-radius: 4px;
+    border:none;
+    margin : 3px;
+}
+button{
+    padding: 7px 25px;
+    border: 1px solid blue;
+    background-color: #b5fffc;
+    color:black;
+    cursor: pointer;
+    display: inline-block;
+    text-align:center;
+    border-radius: 4px;
+    border:none;
+    margin : 3px;
+    font-weight: bold;
+}
+table{
+    padding-top: 10px;
+    width: 800px;
+    margin: auto;
+
+}
+tr,th,td{
+    border: 1px solid black;
+    background-color: aliceblue;
+}
+header{
+    box-sizing: border-box;
+    height: 15%;
+    display: flex;
+    /* 수직 정렬 */
+    align-items: center;
+    /* 수평 정렬 */
+    /* 수평 정렬 */
+    justify-content: center;
+}
+td{
+    padding: 5px;
+}
+a:nth-child(1){
+    color: red;
+    text-decoration: none;
+}
+input[type=text],input[type=date]{
+    font-weight: bold;
+    height: 30px;
+    width: 95%;
+    font-size: 90%;
+}
+input[type=text],input[type=date]{
+    float: left;
+}
