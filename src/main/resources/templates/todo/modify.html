@@ -10,7 +10,9 @@
 <h1>TODO UPDATE</h1>
 </header>
 <table style="width: 500px">
-<form action="save" method="post">
+<form id="frm0" action="save" method="post">
+    <input type="hidden" name="tno" th:value="${vo.tno }">
+    <input type="hidden" name="page" th:value="${page}">
 <tr>
     <th style="width: 60px; height: 50px">번호</th>
     <td><input type="text" name="tno" th:value="${vo.tno}" ></td>
@@ -33,11 +35,11 @@
 </tr>
 <tr>
     <td colspan="3"><button type="submit">수정</button>
-    <form action="delete" method="post">
+    <form id="frm1" action="delete" method="post">
         <input type="hidden" name="tno" th:value="${vo.tno}">
             <button type="submit">삭제</button>
     </form>
-        <button onclick="location.href='list'">목록</button></td>
+        <a th:href="@{list(page=${page})}" class="button">목록</a></td>
 </tr>
 </form>
 </table>

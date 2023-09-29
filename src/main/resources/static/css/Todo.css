@@ -53,7 +53,7 @@ td{
     padding: 5px;
 }
 a:nth-child(1){
-    color: red;
+    color: blue;
     text-decoration: none;
 }
 input[type=text],input[type=date]{
@@ -64,4 +64,20 @@ input[type=text],input[type=date]{
 }
 input[type=text],input[type=date]{
     float: left;
+}
+.pagenum {
+    border: 1px solid#79747E;
+    color: #79747E;
+    padding: 3px 5px;
+    text-decoration: none;  /*  밑줄제거  */
+    cursor: pointer;
+    display: inline-block;
+    text-align:center;
+    font-size: 9pt;
+    border-radius: 2px;
+}
+.pagenum:hover{
+    background-color:#b5fffc;
+    color:black;
+    font-weight: bold;
 }

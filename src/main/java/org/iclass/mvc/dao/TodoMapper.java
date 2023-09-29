@@ -1,11 +1,11 @@
 package org.iclass.mvc.dao;
 
 import java.util.List;
+import java.util.Map;
 //import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 //import org.iclass.mvc.dto.PageRequestDTO;
-import org.iclass.mvc.dto.PageRequestDTO;
 import org.iclass.mvc.dto.TodoDto;
 
 							// 인터페이스는 객체를 생성할 수 없다. 구현(체)클래스가 필요하다.
@@ -17,6 +17,6 @@ public interface TodoMapper {
 	TodoDto selectOne(long tno);
 	int update(TodoDto vo);
 	int delete(long tno);
-	long getCount(PageRequestDTO dto);
-	List<TodoDto> selectPageList(PageRequestDTO dto);
+	List<TodoDto> pagelist(Map<String,Integer> map);
+	int count();
 }

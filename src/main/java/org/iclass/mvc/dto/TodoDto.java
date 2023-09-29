@@ -12,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @Setter
 public class TodoDto {
+	private long r;
 	private long tno;
 	private String title;						//제목
 
