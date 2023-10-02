@@ -31,5 +31,9 @@
     </tr>
 </form>
 </table>
+<script th:if="${message}">
+    const message = [[${alert}]];
+    alert(message);
+</script>
 </body>
 </html>

@@ -42,10 +42,9 @@
     </tr>
 
 </table>
-<script type="text/javascript">
-    const message =alert;
-    if(message.length !=0)
-        alert(message);
+<script th:if="${message}">
+    const message = [[${alert}]];
+    alert(message);
 </script>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>TODO LIST</title>
     <link rel="stylesheet" th:href="@{/css/Todo.css}">
+    <!--http://localhost:8085/todo/list-->
 </head>
 <body>
 <header>
@@ -50,10 +51,13 @@
     <a class="pagenum" th:href="@{'list'(page=(${paging.totalPage}))}">&gt;&gt;</a>
 </div>
 </main>
+<script th:if="${message}">
+    const message = [[${alert}]];
+    alert(message);
+</script>
 <script type="text/javascript">
-    const message = alert;
-    if(message.length !=0)
-        alert(message);
+      /*  const message = `[[${alert}]]`;
+        if(message.length !=0) alert(message);*/
 
     const pnums = document.querySelectorAll('.ieach');
     pnums.forEach(function(item){
