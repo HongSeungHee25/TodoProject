@@ -45,7 +45,8 @@
         </tr>
     </form>
     <tr>
-        <td colspan="3"><a th:href="@{list(page=${page})}" class="button" style="color: black">목록</a></td>
+        <td colspan="3" th:with="link=${pageRequestDTO.link}">
+            <a th:href="|@{read(tno=${vo.tno})}&${link}|" class="button" style="color: black">목록</a></td>
     </tr>
 </table>
 <script th:if="${message}">

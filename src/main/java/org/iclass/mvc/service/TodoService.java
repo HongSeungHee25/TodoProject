@@ -2,6 +2,8 @@ package org.iclass.mvc.service;
 
 import lombok.RequiredArgsConstructor;
 import org.iclass.mvc.dao.TodoMapper;
+import org.iclass.mvc.dto.PageRequestDTO;
+import org.iclass.mvc.dto.PageResponseDTO;
 import org.iclass.mvc.dto.Paging;
 import org.iclass.mvc.dto.TodoDto;
 import org.springframework.stereotype.Service;
@@ -32,26 +34,22 @@ public class TodoService {
     public int delete(long tno){
         return dao.delete(tno);
     }
+    public List<TodoDto> pagelist(PageRequestDTO dto){
 
-    public Map<String,Object> pagelist(int page){
+        dto.setSize(10);			//한 페이지에 보이는 글의 갯수 설정
+        dto.setDatas();				//start 와 end 계산
+        List<TodoDto> list = dao.pagelist(dto);		//글 목록
 
-        int pageSize=10;		//pageSize 를 15 또는 10으로 변경해서 실행해 봅시다.
-        int totalCount = dao.count();
+        //페이지 목록 구현은 예정.
+        return list;
+    }
+    public PageResponseDTO listWithSearch(PageRequestDTO dto){
+        dto.setSize(10);
+        dto.setDatas();
+        List<TodoDto> list = dao.pagelist(dto);
+        PageResponseDTO pageResponseDTO = PageResponseDTO.of(dto,dao.count(dto),5);
+        pageResponseDTO.setList(list);
 
-        //위의 값들을 이용해서 Paging 객체를 생성하면서 다른 필드값을 계산합니다.
-        Paging paging = new Paging(page, totalCount, pageSize);
-
-        //pagelist() 메소드를 실행하기 위한 Map을 생성합니다.
-        Map<String,Integer> map = new HashMap<>();
-        map.put("start",paging.getStartNo());
-        map.put("end",paging.getEndNo());
-
-        List<TodoDto> list = dao.pagelist(map);
-
-        Map<String,Object> result = new HashMap<>();
-        result.put("paging", paging);
-        result.put("list", list);
-
-        return result;
+        return pageResponseDTO;
     }
 }

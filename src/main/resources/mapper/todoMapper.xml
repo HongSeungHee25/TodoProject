@@ -53,11 +53,14 @@
     <select id="pagelist" resultType="TodoDto" parameterType="java.util.Map">
         SELECT * FROM
             (SELECT rownum r ,f.* FROM
-                    (SELECT * FROM tbl_todo  ORDER BY tno DESC) f)
+                    (SELECT * FROM tbl_todo
+        <include refid="search"></include>
+                              ORDER BY tno DESC) f)
         WHERE r BETWEEN #{start} AND #{end}
     </select>
     <select id="count" resultType="int">
         SELECT count(*) FROM tbl_todo
+        <include refid="search"></include>
     </select>
 
     <!--paging 을 할 수 있는 List : 검색을 글 목록에 적용-->
@@ -79,26 +82,29 @@
    <!-- 페이징 & 검색을 위한 동적 쿼리 : selectPageList 와 getCount 에 사용할 '쿼리 코드 조각' 정의 -->
    <!-- 파라미터 이름 : types(String 배열 - 검색 컬럼이 여러개인 경우를 위해 배열 사용) , keyword(String) , finished(boolean) ,
                 from(LocalDate) , to(LocalDate) -->
-   <sql id="search">
-      <!-- 아래 조건에 따라 만들어진 조건식이 있을때만 WHERE 를 추가하는 동작 -->
-      <where>
-         <if test="types != null and types.length > 0">
-            <foreach collection="types" item="type" open="(" close=")" separator=" OR ">
-               <if test="type=='t'.toString()"> title like '%' || #{keyword} || '%' </if>
-               <if test="type=='w'.toString()"> writer like '%' || #{keyword} || '%' </if>
-            </foreach>
-         </if>
-         <if test="finished">   <!-- finished 가 true 일 때만 -->
-            <trim prefix="and">   <!-- 앞의 검색 조건 여부에 따라 and 추가 -->
-               finished = 1
-            </trim>
-         </if>
-         <if test="from != null and to != null">
-            <trim prefix="and">
-               dueDate BETWEEN #{from} AND #{to}
-            </trim>
-         </if>
-      </where>
-   </sql>
-   
- </mapper>
+    <sql id="search">
+        <!-- 아래 조건에 따라 만들어진 조건식이 있을때만 WHERE 를 추가하는 동작 -->
+        <where>
+            <if test="types != null and types.length > 0">
+                <foreach collection="types" item="type" open="(" close=")" separator=" OR ">
+                    <if test="type=='t'.toString()"> title like '%' || #{keyword} || '%' </if>
+                    <if test="type=='w'.toString()"> writer like '%' || #{keyword} || '%' </if>
+                    <if test="type=='c'.toString()">
+                        <choose>
+                            <when test="keyword == '완료'">finished = 1</when>
+                            <when test="keyword == '미완료'">finished = 0</when>
+                        </choose>
+                    </if>
+                </foreach>
+            </if>
+            <if test="from != null and to != null">
+                <trim prefix="and">
+                    dueDate BETWEEN #{from} AND #{to}
+                </trim>
+            </if>
+        </where>
+    </sql>
+
+
+
+</mapper>

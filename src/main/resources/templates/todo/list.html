@@ -4,14 +4,44 @@
     <meta charset="UTF-8">
     <title>TODO LIST</title>
     <link rel="stylesheet" th:href="@{/css/Todo.css}">
-    <!--http://localhost:8085/todo/list-->
+    <style>
+        .none {display: none}
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!-- http://localhost:8085/todo/list -->
 </head>
 <body>
 <header>
 <h1>TODO LIST</h1>
 </header>
-<a th:href="@{register}" class="button">할일 등록</a>
-
+<div style="text-align: center">
+    <div class="row mt-3" style="margin-bottom: 20px; width: 800px; display: inline-block" >
+        <a th:href="@{register}" class="button" style="width: 100px">할일 등록</a>
+        <form action="" method="get">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <select class="form-select" name="type">
+                    <option value="a">전체</option>
+                    <option value="t" th:selected="${pageRequestDTO.type=='t'}">제목</option>
+                    <option value="w" th:selected="${pageRequestDTO.type=='w'}">작성자</option>
+                    <option value="c" th:selected="${pageRequestDTO.type=='c'}">완료여부</option>
+                    <option value="tw" th:selected="${pageRequestDTO.type=='tw'}">제목+작성자</option>
+                    <option value="tc" th:selected="${pageRequestDTO.type=='tc'}">제목+완료여부</option>
+                    <option value="wc" th:selected="${pageRequestDTO.type=='wc'}">작성자+완료여부</option>
+                    <option value="twc" th:selected="${pageRequestDTO.type=='twc'}">제목+작성자+완료여부</option>
+                </select>
+            </div>
+            <input class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary searchBtn" type="submit">검색</button>
+                <button class="btn btn-outline-secondary clearBtn" type="button">초기화</button>
+            </div>
+            <br>
+            <input type="checkbox" name="finished">
+        </div>
+    </form>
+</div>
+</div>
     <table>
         <tr>
             <th>번호</th>
@@ -20,16 +50,16 @@
             <th>날짜</th>
             <th>상태</th>
         </tr>
-<th:block th:each="vo : ${list}">
-    <tr>
-    <td th:text="${vo.r}"></td>
+<th:block th:each="vo : ${paging.list}">
+    <tr th:with="link=${pageRequestDTO.link}">
+            <td th:text="${vo.r}"></td>
         <td>
-            <a th:href="@{'read'(tno=${vo.tno},page=${paging.currentPage})}"
+            <a th:href="|@{read(tno=${vo.tno })}&${link}|"
                th:text="${vo.title}"
                th:style="${vo.finished} ? 'color: darkgrey;' : ''"></a>
         </td>
-        <td th:text="${vo.writer}" th:style="${vo.finished} ? 'color: darkgrey;' : ''">></td>
-    <td th:text="${#temporals.format(vo.dueDate, 'yyyy-MM-dd')}" th:style="${vo.finished} ? 'color: darkgrey;' : ''">></td>
+        <td th:text="${vo.writer}" th:style="${vo.finished} ? 'color: darkgrey;' : ''"></td>
+    <td th:text="${#temporals.format(vo.dueDate, 'yyyy-MM-dd')}" th:style="${vo.finished} ? 'color: darkgrey;' : ''"></td>
         <td>
             <span th:if="${vo.finished} == true" style="color: darkgrey">완료</span>
             <span th:if="${vo.finished} == false" style="color: red">미완료</span>
@@ -37,40 +67,63 @@
     </tr>
     </th:block>
     </table>
-<div style="width:700px;margin: auto;padding: 10px;text-align: center;">
-    전체 글 개수 : <span th:text="${paging.totalCount}"></span> <br>
-    <hr>
-    <a class="pagenum" th:href="@{'?page=1'}">&lt;&lt;</a>
-    <a class="pagenum" th:href="@{'list'(page=(${paging.startPage - 1}))}"
-       th:style="${paging.startPage == 1} ? 'display:none;' : ''">&lt;</a>
-    <th:block th:each="i : ${#numbers.sequence(paging.startPage, paging.endPage)}">
-        <a class="pagenum" th:href="@{'list'(page=${i})}" th:text="${i}"></a>
-    </th:block>
-    <a class="pagenum" th:href="@{'list'(page=(${paging.endPage + 1} ))}"
-       th:style="${paging.endPage == paging.totalPage} ? 'display:none;' : ''">&gt;</a>
-    <a class="pagenum" th:href="@{'list'(page=(${paging.totalPage}))}">&gt;&gt;</a>
-</div>
+    <div style="width:700px;margin: auto;padding: 10px;text-align: center;">
+        전체 글 개수 : [[${ paging.totalCount }]] <br>
+        <hr>
+        <div th:with="start=${paging.startPage},last=${paging.endPage}" id="pagination">
+            <!--startPage 가 1이 아닐 때만 보여 줄 페이지 이동 : 맨앞으로 / 페이지 목록 하나 앞으로 -->
+            <span th:if="${paging.startPage != 1}">
+                <a th:href="@{list(page =1)}" th:data-num="1" th:class="'btn btn-default'">&lt;&lt;</a>
+                <a th:href="@{list(page=${paging.startPage -5})}" th:data-num="${paging.startPage -5}" th:class="'btn btn-default'">&lt;</a>
+            </span>
+            <!-- start ~ last 범위값으로 반복- : #numbers 는 자바 객체를 사용하는 타임리프 기능(객체)
+                    sequence(a,b) 메소드는 a 부터 b 까지 숫자스트림(배열) 만들어서 반복문을 사용할 수 있게 합니다.
+                     start,last 는 타임리프 변수이며 th:with 로 저장했습니다. -->
+            <a th:each="i:${#numbers.sequence(start,last)}"
+               th:href="@{list(page=${i})}" th:text="${i}" th:data-num="${i}" th:class="${i==page}?'btn text-primary':'btn'"></a>
+            <!-- th:class 는 스타일 적용을 하는 기능 : 단 el 조건식 참/거짓에 따라 정하기 -->
+            <!--endPage 가 마지막페이지가 아닐 때만 보여 줄 페이지 이동 : 맨뒤로 / 페이지 목록 하나 뒤로-->
+            <span th:if="${paging.endPage != paging.totalPage}">
+                <span th:if="${paging.endPage+5 > paging.totalPage}">
+                        <a th:href="@{list(page=${paging.totalPage})}" th:data-num="${paging.totalPage}"
+                           th:class="'btn btn-default'">&gt;</a>
+                    </span>
+                    <span th:if="${paging.endPage+5 < paging.totalPage}">
+                        <a th:href="@{list(page=${paging.endPage +5})}" th:data-num="${paging.endPage +5}"
+                           th:class="'btn btn-default'">&gt;</a>
+                    </span>
+                <a th:href="@{list(page=${paging.totalPage})}" th:data-num="${paging.totalPage}" th:class="'btn btn-default'">&gt;&gt;</a>
+            </span>
+            <span class="btn"> | 현재 페이지 번호 : [[${page}]] | </span>
+        </div>
+
+    </div>
 </main>
-<script th:if="${message}">
+<!--<script th:if="${message}">
     const message = [[${alert}]];
     alert(message);
-</script>
-<script type="text/javascript">
-      /*  const message = `[[${alert}]]`;
-        if(message.length !=0) alert(message);*/
+</script>-->
+    <!--검색기능을 포함한 페이징을 하기 위해 th:href 를 직접 지정하지 않고 자바스크립트 이벤트리스너로 작성-->
+    <script type="text/javascript">
+        document.querySelector("#pagination").addEventListener('click',e=>{
+            //#pagination 안에 있는 a 태그에 클릭 이벤트 처리하도록 합니다.
+            e.preventDefault()              //a 태그 등 pagination 안에 있는 기본 클릭 동작을 중지
+            e.stopPropagation()             //클릭 이벤트는 자식 또는 부모요소에 전달되는데 그것을 중지
+            const target = e.target
+            if(target.tagName !== 'A'){return}          //클릭한 요소가 a 태그가 아니면 종료
 
-    const pnums = document.querySelectorAll('.ieach');
-    pnums.forEach(function(item){
-        console.log(item);
-        if(item.innerHTML=='${paging.currentPage}') {
-            item.style.color = 'black';
-            item.style.fontWeight = 'bold';
-        }else{
-            item.style.color = '#37966f';
-        }
-    });
-</script>
-
-
+            const num = target.getAttribute("data-num")     //a 태그의 data-num 속성값 가져오기. data-num 은 화면에 출력하지 않고 데이터를 저장
+            console.log(num)
+            //검색을 위한 추가 코드
+            const formObj = document.querySelector("form")
+            formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`
+            formObj.submit()        //form 파라미터 값들 서버로 전송
+        })
+        //초기화 버튼
+        document.querySelector(".clearBtn").addEventListener('click',e=>{
+            //location.href='/community/list'
+            self.location='/todo/list'
+        })
+    </script>
 </body>
 </html>

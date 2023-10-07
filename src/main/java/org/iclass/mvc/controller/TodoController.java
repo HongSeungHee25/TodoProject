@@ -1,5 +1,7 @@
 package org.iclass.mvc.controller;
 
+import org.iclass.mvc.dto.PageRequestDTO;
+import org.iclass.mvc.dto.PageResponseDTO;
 import org.iclass.mvc.dto.TodoDto;
 import org.iclass.mvc.service.TodoService;
 import org.springframework.stereotype.Controller;
@@ -38,22 +40,26 @@ public class TodoController {
         model.addAttribute("list",list);
     }*/
     @GetMapping("/list")
-    public void list(@RequestParam(defaultValue = "1") int page, Model model){
-        model.addAttribute("list",service.pagelist(page).get("list"));
-        model.addAttribute("paging",service.pagelist(page).get("paging"));
+    public void pagelist(PageRequestDTO pageRequestDTO, Model model){
+        PageResponseDTO responseDTO =  service.listWithSearch(pageRequestDTO);
+        //list.html 에 전달한 model 관련 코드 작성. list.html 도 완성하기. 레이아웃도 적용 하기
+//        model.addAttribute("list",service.pagelist(pageRequestDTO));
+        model.addAttribute("paging",responseDTO);
+        model.addAttribute("page",pageRequestDTO.getPage());
+        model.addAttribute("today", LocalDate.now());
     }
 
     @GetMapping("/read")
-    public void read(long tno, @ModelAttribute("page") int page, Model model){
+    public void read(PageRequestDTO pageRequestDTO, long tno, @ModelAttribute("page") int page, Model model){
         model.addAttribute("vo",service.selectOne(tno));
     }
 
     @GetMapping("/modify")
-    public void update(long tno,@ModelAttribute("page") int page, Model model){
+    public void update(PageRequestDTO pageRequestDTO,long tno,@ModelAttribute("page") int page, Model model){
         model.addAttribute("vo", service.selectOne(tno));
     }
     @PostMapping("/save")
-    public String save(int page,long tno,TodoDto dto, RedirectAttributes redirectAttributes){
+    public String save(PageRequestDTO pageRequestDTO,int page,long tno,TodoDto dto, RedirectAttributes redirectAttributes){
         service.update(dto);
         
         redirectAttributes.addAttribute("tno",tno);

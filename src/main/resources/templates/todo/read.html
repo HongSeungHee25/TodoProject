@@ -31,12 +31,12 @@
         <td><input type="checkbox" name="finished" th:checked="${vo.finished}" readonly></td>
     </tr>
     <tr>
-        <td colspan="2">
+        <td colspan="2" th:with="link=${pageRequestDTO.link}">
             <form action="" method="post">
             <input type="hidden" name="tno" th:value="${vo.tno}">
             <input type="hidden" name="page" th:value="${page}">
-        <a th:href="@{modify(tno=${vo.tno},page=${page})}" class="button" style="text-decoration: none; color: black">수정</a>
-        <a th:href="@{list(page=${page})}" class="button" style="text-decoration: none; color: black">목록</a>
+        <a th:href="|@{modify(tno=${vo.tno})}&${link}|" class="button" style="text-decoration: none; color: black">수정</a>
+        <a th:href="|@{list}?${link}|" class="button" style="text-decoration: none; color: black">목록</a>
             </form>
         </td>
     </tr>
